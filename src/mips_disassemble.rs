@@ -70,16 +70,16 @@ pub fn disassemble(encoded_instruction: u32) -> Result<MipsInstruction, String> 
     let i_type: Option<MipsInstructionType>;
 
     if op == 0 {
-        name = Some(MIPS_REGISTER_INSTRUCTION_NAMES[funct_upper as usize][funct_lower as usize].into());
+        name = Some(get_name_from_map(MIPS_REGISTER_INSTRUCTION_NAMES, funct_upper, funct_lower)?.into());
         i_type = Some(MipsInstructionType::R);
     } else if op == 0x1c {
-        name = Some(MIPS_REGISTER_C_INSTRUCTION_NAMES[funct_upper as usize][funct_lower as usize].into());
+        name = Some(get_name_from_map(MIPS_REGISTER_C_INSTRUCTION_NAMES, funct_upper, funct_lower)?.into());
         i_type = Some(MipsInstructionType::R);
     } else if op == 1 {
-        name = Some(MIPS_REGISTER_RT_INSTRUCTION_NAMES[rt_upper as usize][rt_lower as usize].into());
+        name = Some(get_name_from_map(MIPS_REGISTER_RT_INSTRUCTION_NAMES, rt_upper, rt_lower)?.into());
         i_type = Some(MipsInstructionType::I);
     } else {
-        name = Some(MIPS_ROOT_INSTRUCTION_NAMES[op_upper as usize][op_lower as usize].into());
+        name = Some(get_name_from_map(MIPS_ROOT_INSTRUCTION_NAMES, op_upper, op_lower)?.into());
         i_type = Some(MipsInstructionType::I);
     }
 
@@ -272,6 +272,16 @@ const MIPS_ROOT_INSTRUCTION_NAMES: &'static [&'static [&'static str]] = &[
     &["ll"],
     &["sc"]
 ];
+
+fn get_name_from_map(map: &'static [&'static [&'static str]], row: u8, column: u8) -> Result<&'static str, String> {
+    if map.len() <= row as usize {
+        return Err("Lookup row out of range".into());
+    }
+    if map[row as usize].len() <= column as usize {
+        return Err("Lookup column out of range".into());
+    }
+    Ok(map[row as usize][column as usize])
+}
 
 const MIPS_REG_C_TYPE_MULTIPLY: u8 = 0;
 const MIPS_REG_C_TYPE_COUNT: u8 = 4;
