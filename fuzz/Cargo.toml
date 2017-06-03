@@ -1,0 +1,25 @@
+
+[package]
+name = "mips-dasm-fuzz"
+version = "0.0.1"
+authors = ["Automatically generated"]
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies.mips-dasm]
+path = ".."
+[dependencies.libfuzzer-sys]
+git = "https://github.com/rust-fuzz/libfuzzer-sys.git"
+
+[dependencies]
+arbitrary = "0.1"
+
+# Prevent this from interfering with workspaces
+[workspace]
+members = ["."]
+
+[[bin]]
+name = "disassemble"
+path = "fuzzers/disassemble.rs"
